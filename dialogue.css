@@ -1,0 +1,155 @@
+body {
+    background: darkgrey;
+    font-family: Sans;
+}
+
+div.textbox {
+    background: black;
+    color: white;
+    white-space: pre-wrap;
+    word-break: break-all;
+    width: 265px;
+    padding: 4px;
+    border: 2px solid white;
+    margin-top: 4px;
+}
+
+a.textbox {
+    color: white;
+    text-decoration: none;
+}
+
+/* DTM Mono -> 디터머네이션샌즈K2 (DeterminationSansK2)로 수정 */
+div.dtm {
+    font-family: "DeterminationSansK2", Monospace;
+}
+
+/* UT Sans -> 굴림13 (gulim-13px)으로 수정 */
+div.sans {
+    font-family: "gulim-13px", "Comic Sans", "DeterminationSansK2", Monospace;
+}
+
+/* UT Papyrus -> 궁서13 (gungsuh-13px)로 수정 */
+div.papyrus {
+    font-family: "gungsuh-13px", "Papyrus", "DeterminationSansK2", Monospace;
+}
+
+div#textboxes {
+    display: inline;
+}
+
+/* === 수정된 부분: heading 스타일 === */
+a.heading {
+    color: black;
+    text-decoration: none;
+    font-family: "DeterminationSansK2", Monospace; /* 폰트 적용 */
+}
+
+a.heading:hover {
+    color: #ff0; /* 노란색으로 변경 */
+}
+/* ================================== */
+
+span.red {
+    color: #f00;
+}
+
+span.yellow {
+    color: #ff0;
+}
+
+span.lightblue {
+    color: #14a9ff;
+}
+
+span.blue {
+    color: #00f;
+}
+
+span.green {
+    color: #0f0;
+}
+
+span.orange {
+    color: #ffa040;
+}
+
+span.purple {
+    color: #f0f;
+}
+
+/* @font-face 규칙 수정 */
+
+/* DTM Mono -> 디터머네이션샌즈K2 */
+@font-face {
+    font-family: "DeterminationSansK2";
+    src: url('DeterminationSansK2.ttf') format('truetype');
+
+}
+
+/* UT Sans -> 굴림13 */
+@font-face {
+    font-family: "gulim-13px";
+    src: url('gulim-13px.ttf') format('truetype');
+
+}
+
+/* UT Papyrus -> 궁서13 */
+@font-face {
+    font-family: "gungsuh-13px";
+    src: url('gungsuh-13px.ttf') format('truetype');
+
+}
+
+/* 검색 가능한 드롭다운 스타일 */
+
+.searchable-dropdown {
+    position: relative;
+    display: inline-block;
+    font-family: "gulim-13px", "Comic Sans", "DeterminationSansK2", Monospace;
+}
+
+#character-search {
+    background: black;
+    color: white;
+    width: 265px;
+    padding: 4px;
+    border: 2px solid white;
+    box-sizing: border-box; /* 패딩과 테두리를 너비에 포함 */
+    font-family: inherit;
+    font-size: 1em;
+}
+
+#character-search:focus {
+    outline: none;
+}
+
+.character-options {
+    display: none; /* 기본적으로 숨김 */
+    position: absolute;
+    background-color: black;
+    border: 2px solid white;
+    border-top: none;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 10;
+    box-sizing: border-box;
+}
+
+.character-options.show {
+    display: block; /* JS로 제어하여 보임 */
+}
+
+.character-options .option {
+    color: white;
+    padding: 6px 8px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.character-options .option:hover {
+    background-color: #333; /* 호버 시 배경색 변경 */
+}

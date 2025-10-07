@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="textdump.js"></script>
+    <script src="dialogue.js"></script>
+    <link rel="stylesheet" type="text/css" href="dialogue.css">
+    <title>언더테일 한글패치 대사 목록</title>
+  </head>
+  <body>
+    <p>원본 <a href="https://hushbugger.github.io/dialogue/">사이트</a> (전 그냥 한국판 json을 다시 포맷팅했습니다.)</p>
+    
+    <div id="searchable-dropdown" class="searchable-dropdown">
+      <input type="text" id="character-search" placeholder="캐릭터를 검색하거나 선택하세요...">
+      <div id="character-options" class="character-options"></div>
+    </div>
+    
+    <div id="textboxes">
+    </div>
+    <noscript>
+      <p>죄송하지만, 이 기능을 사용하려면 JavaScript를 활성화해야 합니다.</p>
+    </noscript>
+    <div class="credits">
+      <p>
+        크레딧:
+        <a href="https://gall.dcinside.com/board/view/?id=undertale&no=1213864">DeterminationSansK2</a>,
+        <a href="https://gall.dcinside.com/mgallery/board/view/?id=undeltarune&no=13259">언더테일 1.08 한글패치</a>
+      </p>
+    </div>
+    <script>
+      "use strict";
+
+      function setSelection(character, indexes) {
+          const searchInput = document.getElementById('character-search');
+          if (character) {
+              searchInput.value = character;
+          } else {
+              searchInput.value = '';
+              searchInput.placeholder = "캐릭터를 검색하거나 선택하세요...";
+          }
+
+          if (indexes === null) {
+              window.location.hash = "#" + character;
+          } else {
+              window.location.hash = "#" + character + ":" + indexes.join();
+          }
+          if (character === "") {
+              document.title = "언더테일 한글패치 대사 목록";
+          } else {
+              document.title = "언더테일 한글패치 대사 목록: " + character;
+          }
+      }
+
+      function writeDialogue(character) {
+          var indexes = null;
+          var asList = character.split(':');
+          if (asList.length === 2) {
+              character = asList[0];
+              indexes = asList[1].split(',');
+              if (indexes.length === 1 && indexes[0] === "") {
+                  indexes = [];
+              }
+              for (var i = 0; i < indexes.length; i++) {
+                  indexes[i] = parseInt(indexes[i]);
+              }
+          }
+          if (d[character] === undefined) {
+              character = "";
+          }
+          document.getElementById('textboxes').innerHTML = "";
+          setSelection(character, indexes);
+          if (character === "") {
+              var boxes = document.getElementById('textboxes');
+              var characters = Object.keys(d);
+              characters.sort()
+              for (var i = 0; i < characters.length; i++) {
+                  var heading = document.createElement('h1');
+                  heading.classList.add('heading');
+                  var link = document.createElement('a');
+                  link.classList.add('heading');
+                  link.appendChild(document.createTextNode(characters[i]));
+                  link.href = "#" + characters[i];
+                  heading.appendChild(link);
+                  boxes.appendChild(heading);
+                  addBoxes(characters[i]);
+              }
+          } else if (character !== "") {
+              if (indexes !== null) {
+                  for (var i = 0; i < indexes.length; i++) {
+                      addBox(character, indexes[i]);
+                  }
+              } else {
+                  addBoxes(character);
+              }
+          }
+      }
+
+      const characters = Object.keys(d);
+      characters.sort();
+      
+      const searchInput = document.getElementById('character-search');
+      const optionsContainer = document.getElementById('character-options');
+
+      // === 새로 추가된 부분: "선택 안함" 옵션 생성 ===
+      const noSelectionOption = document.createElement('div');
+      noSelectionOption.classList.add('option');
+      noSelectionOption.textContent = '선택 안함';
+      optionsContainer.appendChild(noSelectionOption);
+      noSelectionOption.addEventListener('click', (e) => {
+        e.stopPropagation();
+        searchInput.value = ''; // 입력창 비우기
+        optionsContainer.classList.remove('show');
+        window.location.hash = ''; // 해시를 비워서 초기화
+      });
+      // ==========================================
+
+      // 1. 옵션 목록 생성
+      characters.forEach(character => {
+          const optionDiv = document.createElement('div');
+          optionDiv.classList.add('option');
+          optionDiv.textContent = character;
+          optionDiv.dataset.value = character;
+          optionsContainer.appendChild(optionDiv);
+
+          // 2. 각 옵션 클릭 이벤트
+          optionDiv.addEventListener('click', (e) => {
+              e.stopPropagation();
+              searchInput.value = character;
+              optionsContainer.classList.remove('show');
+              window.location.hash = "#" + character;
+          });
+      });
+
+      // 3. 검색창 클릭 시 옵션 목록 토글
+      searchInput.addEventListener('click', (e) => {
+          e.stopPropagation();
+          optionsContainer.classList.toggle('show');
+      });
+      
+      // 4. 검색창 입력 시 실시간 필터링
+      searchInput.addEventListener('input', () => {
+          const filter = searchInput.value.toLowerCase();
+          const options = optionsContainer.getElementsByClassName('option');
+          optionsContainer.classList.add('show');
+
+          for (let i = 0; i < options.length; i++) {
+              const txtValue = options[i].textContent || options[i].innerText;
+              // "선택 안함"은 항상 보이도록 수정
+              if (txtValue === '선택 안함' || txtValue.toLowerCase().indexOf(filter) > -1) {
+                  options[i].style.display = "";
+              } else {
+                  options[i].style.display = "none";
+              }
+          }
+      });
+      
+      // 5. 문서의 다른 곳 클릭 시 옵션 목록 숨기기
+      window.addEventListener('click', function(event) {
+          if (!document.getElementById('searchable-dropdown').contains(event.target)) {
+              optionsContainer.classList.remove('show');
+          }
+      });
+
+      window.onhashchange = function() {
+          writeDialogue(decodeURIComponent(window.location.hash.substr(1)));
+      }
+
+      window.onhashchange();
+    </script>
+  </body>
+</html>
