@@ -80,8 +80,8 @@ function textbox(character, index) {
     var text = d[character][index];
     var box = document.createElement('div');
     box.classList.add('textbox');
-    box.classList.add(character.startsWith("Papyrus") ? 'papyrus' :
-                      character.startsWith("Sans") ? 'sans' :
+    box.classList.add(character.startsWith("파피루스") ? 'papyrus' :
+                      character.startsWith("샌즈") ? 'sans' :
                       'dtm');
     var link = document.createElement('a');
     link.href = '#' + character + ':' + index;
