@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Deltarune text dump — 한국어 추가</title>
+        <link
+            rel="shortcut icon"
+            type="image/png"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACB
+            VGfHAAAAD1BMVEUAAADAgiYAAACFSh3AgibGPmPhAAAAAnRSTlMAAHaTzTgAAACXSURB
+            VCiRhZHLDYRADEN9oISt4I0rQBQAGfdf0x6AhVntxzc/OXGkSH/1yKBNDwZtqhH4E5gv
+            27CK5Eg5OUAfQXN2kJr3pUnRZpwcLUt6S+Yl/axt5aTcb3f4rPoKSH6c/g90gAIwwKIJ
+            ICQEYNUEOLhIAatU4JTLKbC0z+B9+Srp3mPpFbkCUk6f81l58we5eSnJ4H/pCVYTQjf3
+            DYm9AAAAAElFTkSuQmCC"
+        />
+        <link rel="prefetch" href="spr_introimage1_0.png" />
+        <link rel="prefetch" href="spr_introimage1_1.png" />
+        <style>
+            @font-face {
+                font-family: '8bitoperator Undertale Mono';
+                src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2506-1@1.0/Galmuri14.woff2') format('woff2');
+                font-weight: normal;
+                font-display: swap;
+            }
+
+            body {
+                --background-color: black;
+                --foreground-color: white;
+                --pixel-blend-mode: difference;
+
+                background: black;
+                color: white;
+                background: var(--background-color);
+                color: var(--foreground-color);
+                font-family: sans-serif;
+                margin: 0px;
+                line-height: 1.125em;
+                overflow-wrap: break-word;
+            }
+
+            body.light {
+                --background-color: white;
+                --foreground-color: #2c1708;
+                --pixel-blend-mode: multiply;
+            }
+
+            div.intro {
+                background: var(--foreground-color);
+                color: var(--background-color);
+                padding: 0.4em;
+            }
+
+            body.light div.intro a {
+                color: var(--background-color);
+            }
+
+            div.controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+            }
+
+            h1,
+            h2 {
+                font-size: 2em;
+                line-height: 1em;
+                font-weight: normal;
+                padding-left: 20px;
+                margin-top: 24px;
+                margin-bottom: 12px;
+            }
+
+            h1 a,
+            h2 a {
+                color: var(--foreground-color);
+                text-decoration: none;
+            }
+
+            span.breakable {
+                word-break: break-all;
+            }
+
+            div.textbox {
+                white-space: pre-wrap;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 20px;
+                position: relative;
+            }
+
+            div.indented {
+                margin: 0;
+                padding-left: 16px;
+                text-indent: -16px;
+            }
+
+            a.linkBar {
+                width: 20px;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: var(--foreground-color);
+                mask-position: 0 5px;
+                mask-image: url("hyperlink.svg");
+                mask-repeat: no-repeat;
+            }
+
+            /* ensure monospace font is applied for KO too */
+            div.textbox.en,
+            div.textbox.ko,
+            pre.loading,
+            div.textbox.untranslated,
+            h1,
+            h2 {
+                font-family: "8bitoperator Undertale Mono", Monospace;
+                mix-blend-mode: var(--pixel-blend-mode);
+            }
+
+            span.R { color: #f00; }
+            span.B { color: #00f; }
+            span.Y { color: #ff0; }
+            span.G { color: #0f0; }
+            span.O { color: #ffa040; }
+            span.A { color: #00aeff; }
+            span.S { color: #ff80ff; }
+            span.V { color: #80ff80; }
+            span.I { color: #81c0ff; }
+
+            body.light span.Y,
+            body.light span.G,
+            body.light span.A,
+            body.light span.V,
+            body.light span.S,
+            body.light span.I {
+                -webkit-text-stroke: 2px var(--foreground-color);
+                paint-order: stroke fill;
+            }
+
+            span.picture,
+            span.param,
+            div.untranslated {
+                background: var(--foreground-color);
+                color: var(--background-color);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="intro">
+            <div class="controls">
+                <div id="lang-controls" aria-label="언어 선택">
+                    <label><input type="checkbox" id="lang-ko" value="ko"/> 한국어</label>
+                    <label><input type="checkbox" id="lang-en" value="en"/> English</label>
+                    <label><input type="checkbox" id="lang-ja" value="ja"/> 日本語</label>
+                </div>
+
+                <select id="chapter" name="chapter">
+                    <option value="all">모든 챕터</option>
+                    <option value="1">챕터 1</option>
+                    <option value="2">챕터 2</option>
+                    <option value="3">챕터 3</option>
+                    <option value="4">챕터 4</option>
+                </select>
+                <button type="button" id="keyboard-guide-toggle">단축키</button>
+                <button>
+                    <img
+                        id="light-mode-toggle"
+                        src="spr_introimage1_0.png"
+                        alt="Toggle light mode"
+                        title="Toggle light mode"
+                        width="80"
+                        height="44"
+                    />
+                </button>
+            </div>
+            <ul id="keyboard-guide" style="display: none">
+            <li><strong>l</strong>(ight): 라이트 모드 토글.</li>
+                <li>
+                    <strong>q</strong>(uote): 선택된 메시지를 클립보드에
+                    마크다운/디스코드 스타일로 복사합니다 (각 줄 앞에 "> ",
+                    "*"는 "\*"로 이스케이프 처리).
+                </li>
+                <li>
+                    <strong>&gt;</strong>: 메시지를 클립보드에
+                    이메일 스타일로 복사합니다 (각 줄 앞에 "> ").
+                </li>
+                <li>
+                    <strong>k</strong>(ey): 번역 키를 클립보드에 복사합니다.
+                </li>
+                <li>
+                    <strong>c</strong>(ode): 선택된 메시지를 소스
+                    코드에서 엽니다 (sourcemap + localStorage.deltaruneSourceUri가 설정된 경우).
+                </li>
+            </ul>
+            <a href="DELTARUNE.txt" target="_blank">텍스트 파일 (EN)</a>
+            <strong>·</strong>
+            <a href="DELTARUNE_ja.txt" target="_blank">텍스트 파일 (JA)</a>
+            <strong>·</strong>
+            <a href="DELTARUNE_ko.txt" target="_blank">텍스트 파일 (KO)</a>
+            <strong>·</strong>
+            <a href="https://forms.gle/cmXFH7HoadC9oMX36" target="_blank">피드백</a>
+            <strong>·</strong>
+            <a href="https://github.com/HushBugger/hushbugger.github.io/tree/master/deltarune/text" target="_blank">소스 코드/원본 사이트</a>
+        </div>
+        <script>
+            // @ts-check
+            "use strict";
+
+            document.getElementById("keyboard-guide-toggle")?.addEventListener("click", function () {
+                const guide = document.getElementById("keyboard-guide");
+                if (guide) {
+                    guide.style.display = guide.style.display === "none" ? "" : "none";
+                }
+            });
+
+            /** @type {HTMLImageElement} */
+            // @ts-ignore
+            const lightModeToggle = document.getElementById("light-mode-toggle");
+
+            function toggleLightMode() {
+                if (document.body.classList.toggle("light")) {
+                    lightModeToggle.src = "spr_introimage1_1.png";
+                    localStorage.setItem("deltaruneLightMode", "true");
+                } else {
+                    lightModeToggle.src = "spr_introimage1_0.png";
+                    localStorage.removeItem("deltaruneLightMode");
+                }
+            }
+
+            lightModeToggle.parentElement?.addEventListener("click", toggleLightMode);
+
+            if (localStorage.getItem("deltaruneLightMode")) {
+                document.body.classList.add("light");
+                lightModeToggle.src = "spr_introimage1_1.png";
+            }
+
+            // Only chapter remains in the old selects array.
+            const selects = /** @type {const} */ ([
+                { id: "chapter", key: "chap", default_: "all" }
+            ]);
+
+            /** @type {{chap:string, langs: string[]}} */
+            const config = { chap: 'all', langs: ['ko'] };
+
+            // language checkbox elements
+            const langElems = {
+                ko: document.getElementById('lang-ko'),
+                en: document.getElementById('lang-en'),
+                ja: document.getElementById('lang-ja')
+            };
+
+            for (const select of selects) {
+                const elem = /** @type {HTMLSelectElement} */ (document.getElementById(select.id));
+                elem.addEventListener("change", function (event) {
+                    const value = elem.selectedOptions[0].value;
+                    const newURL = new URL(String(window.location));
+                    if (value === select.default_) {
+                        newURL.searchParams.delete(select.key);
+                    } else {
+                        newURL.searchParams.set(select.key, value);
+                    }
+                    newURL.searchParams.sort();
+                    window.history.pushState({}, "", newURL);
+                    config[select.key] = value;
+                    render();
+                });
+            }
+
+            // checkbox handlers
+            function updateLangUrlAndRender() {
+                const langs = [];
+                for (const l of ['ko','en','ja']) {
+                    const el = langElems[l];
+                    if (el && el.checked) langs.push(l);
+                }
+                // default to ko if empty
+                if (langs.length === 0) langs.push('ko');
+                const newURL = new URL(String(window.location));
+                newURL.searchParams.set('lang', langs.join(','));
+                newURL.searchParams.sort();
+                window.history.pushState({}, '', newURL);
+                config.langs = langs;
+                render();
+            }
+
+            for (const l of ['ko','en','ja']) {
+                const el = langElems[l];
+                if (el) {
+                    el.addEventListener('change', updateLangUrlAndRender);
+                }
+            }
+
+            function loadConfigFromURL() {
+                const params = new URL(String(window.location)).searchParams;
+                for (const select of selects) {
+                    const value = params.get(select.key) || select.default_;
+                    config[select.key] = value;
+                    for (const option of /** @type {HTMLSelectElement} */ (document.getElementById(select.id)).options) {
+                        if (option.value === value) option.selected = true;
+                    }
+                }
+                // parse lang param (comma separated). backward compat: 'both' -> en+ja
+                const langParam = params.get('lang');
+                let langs = [];
+                if (!langParam) {
+                    langs = ['ko'];
+                } else if (langParam === 'both') {
+                    langs = ['en','ja'];
+                } else {
+                    langs = langParam.split(',').map(s => s.trim()).filter(Boolean);
+                }
+                // ensure at least ko present
+                if (langs.length === 0) langs = ['ko'];
+                config.langs = langs;
+
+                // update checkboxes
+                for (const l of ['ko','en','ja']) {
+                    const el = langElems[l];
+                    if (el) el.checked = config.langs.includes(l);
+                }
+            }
+
+            if (window.location.hash === "#ja") {
+                const newURL = new URL(String(window.location));
+                newURL.searchParams.set("lang", "ja");
+                newURL.hash = "";
+                window.history.pushState({}, "", newURL);
+            }
+
+            loadConfigFromURL();
+
+            addEventListener("popstate", function () {
+                loadConfigFromURL();
+                render();
+            });
+        </script>
+        <div id="textboxes">
+            <pre class="loading">    Loading...</pre>
+        </div>
+        <noscript>
+            <p>This pages requires JavaScript. Sorry :(</p>
+        </noscript>
+        <script src="rendered.json.js"></script>
+        <script>
+            // @ts-check
+            "use strict";
+
+            /** @type {Record<string,Record<string,Record<string,{en:string|null,ja:string|null,ko?:string|null}>>>|undefined} */
+            // @ts-ignore
+            const text = rendered;
+
+            /** @type {HTMLDivElement} */
+            // @ts-ignore
+            const textboxes = document.getElementById("textboxes");
+
+            /** @type {string|null} */
+            let curRendered = null;
+
+            render();
+
+            function render() {
+                if (!text) return;
+
+                // order langs such that ko appears first if selected
+                const preferredOrder = ['ko','en','ja'];
+                const langsSelected = preferredOrder.filter(l => config.langs.includes(l));
+
+                const thisRender = `${config.chap}:${langsSelected.join('+')}`;
+                if (thisRender === curRendered) return;
+
+                textboxes.innerHTML = "";
+                const dedup = {};
+                for (const chapterNo of [1, 2, 3, 4]) {
+                    if (config.chap !== String(chapterNo) && config.chap !== "all") continue;
+                    const chapterTitle = mkTitle("h1", `${chapterNo}`, `Chapter ${chapterNo}`);
+                    textboxes.appendChild(chapterTitle);
+
+                    const chapter = text[chapterNo];
+                    for (const groupName of Object.keys(chapter)) {
+                        const group = chapter[groupName];
+
+                        let title = mkTitle("h2", `${chapterNo}_${groupName}`, groupName.replace(/_slash_/g, "/"));
+                        title.classList.add("groupName");
+
+                        for (const msgId of Object.keys(group)) {
+                            // render for each selected language in preferred order
+                            for (const lang of langsSelected) {
+                                const msg = group[msgId][lang];
+                                if (!msg) continue;
+                                if (msg !== dedup[`${lang}_${msgId}`]) {
+                                    if (title) { textboxes.appendChild(title); title = null; }
+                                    const box = buildBox(lang, `${lang}:${chapterNo}:${msgId}`, msg);
+                                    textboxes.appendChild(box);
+                                    dedup[`${lang}_${msgId}`] = msg;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                curRendered = thisRender;
+            }
+
+            function mkTitle(elem, id, text) {
+                const title = document.createElement(elem);
+                title.id = id;
+                const link = document.createElement("a");
+                link.href = `#${id}`;
+                link.innerText = text;
+                link.innerHTML = link.innerHTML.replace(/_/g, '<span class="breakable">_</span>');
+                title.appendChild(link);
+                return title;
+            }
+
+            function buildBox(lang, id, text) {
+                const box = document.createElement("div");
+                box.id = id;
+                box.classList.add("textbox");
+                box.classList.add(lang);
+                if (lang === "ja") box.lang = "ja";
+                if (lang === "ko") box.lang = "ko";
+                if (text === null) {
+                    box.classList.add("untranslated");
+                    if (lang === "en") text = "(No English translation.)";
+                    else if (lang === "ja") text = "(No Japanese translation.)";
+                    else if (lang === "ko") text = "(No Korean translation.)";
+                    else text = "(No translation.)";
+                }
+                box.innerHTML = text;
+                return box;
+            }
+
+            const sourceCodeUri = localStorage.getItem("deltaruneSourceUri");
+            let sourceMap = null;
+            if (sourceCodeUri) {
+                fetch("sourcemap.json")
+                    .then((response) => response.json())
+                    .then((data) => (sourceMap = data));
+            }
+
+            addEventListener("keydown", function (event) {
+                if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+                if (event.key === "l") toggleLightMode();
+
+                if (event.key === "q" || event.key === ">") {
+                    const sel = window.getSelection();
+                    if (!sel) return;
+                    let start = getBox(sel.anchorNode);
+                    let end = getBox(sel.focusNode);
+                    if (!start || !end) { sel.empty(); return; }
+                    if (sel.direction === "backward") [start, end] = [end, start];
+                    sel.setBaseAndExtent(start, 0, end, end.childNodes.length);
+                    let text = sel.toString().trim();
+                    text = text.replace(/\r/g, "");
+                    text = text.replace(/^\s*\n/gm, "");
+                    if (event.key === "q") text = text.replace(/\*/g, "\\*");
+                    text = text.replace(/^/gm, "> ");
+                    navigator.clipboard.writeText(text + "\n");
+                }
+
+                if (event.key === "k") {
+                    const sel = window.getSelection();
+                    const box = getBox(sel?.anchorNode);
+                    if (box) { navigator.clipboard.writeText(box.id.split(":")[2]); sel?.empty(); }
+                }
+
+                if (event.key === "c") {
+                    const box = getBox(window.getSelection()?.anchorNode);
+                    if (!box || !sourceCodeUri || !sourceMap) return;
+                    const [lang, chapterNo, msgId] = box.id.split(":");
+                    const sourceLocation = sourceMap[chapterNo][msgId];
+                    if (!sourceLocation) return;
+                    const [file, line] = sourceLocation.split(":");
+                    const targetUri = sourceCodeUri
+                        .replace("{chapter}", String(chapterNo))
+                        .replace("{file}", file)
+                        .replace("{line}", line);
+                    window.open(targetUri, targetUri.startsWith("http") ? "_blank" : "_self");
+                }
+            });
+
+            function getBox(elem) {
+                if (elem instanceof HTMLElement && elem.classList.contains("textbox")) return elem;
+                return elem?.parentElement?.closest(".textbox");
+            }
+
+            let activeBox = null;
+            const linkBar = document.createElement("a");
+            linkBar.classList.add("linkBar");
+
+            textboxes.addEventListener("mouseover", function (event) {
+                if (!(event.target instanceof Element)) return;
+                const textbox = event.target.closest(".textbox");
+                if (activeBox === textbox) return;
+                if (!textbox) { activeBox = null; linkBar.remove(); return; }
+                activeBox = textbox;
+                linkBar.href = `#${textbox.id}`;
+                textbox.appendChild(linkBar);
+            });
+        </script>
+    </body>
+</html>
